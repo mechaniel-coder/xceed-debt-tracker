@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xerox / XBUniverse Owes Daniel Pall</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0a0a0a;
+    color: #fff;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .label-top {
+    font-size: 1rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 12px;
+  }
+
+  .company {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #e65100;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .owes-label {
+    font-size: 1rem;
+    color: #aaa;
+    margin-bottom: 28px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .amount {
+    font-size: clamp(3.5rem, 12vw, 7rem);
+    font-weight: 900;
+    color: #ffab00;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-shadow: 0 0 60px rgba(255, 171, 0, 0.45);
+  }
+
+  .breakdown {
+    margin-top: 36px;
+    width: 100%;
+    max-width: 520px;
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid #1e1e1e;
+    font-size: 0.95rem;
+  }
+
+  .breakdown-row:last-child { border-bottom: none; }
+
+  .breakdown-row .desc { color: #aaa; }
+  .breakdown-row .val  { color: #fff; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .breakdown-row.total .desc { color: #ffab00; font-weight: 700; }
+  .breakdown-row.total .val  { color: #ffab00; font-size: 1.05rem; }
+
+  .interest-bar-wrap {
+    margin-top: 28px;
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .interest-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 6px;
+  }
+
+  .interest-bar-track {
+    background: #1e1e1e;
+    border-radius: 999px;
+    height: 8px;
+    overflow: hidden;
+  }
+
+  .interest-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #e65100, #ffab00);
+    transition: width 1s ease;
+  }
+
+  .status {
+    margin-top: 14px;
+    font-size: 0.82rem;
+    color: #555;
+    text-align: center;
+  }
+
+  .status span { color: #888; }
+
+  .statute-note {
+    margin-top: 18px;
+    padding: 10px 20px;
+    background: rgba(255, 171, 0, 0.06);
+    border: 1px solid rgba(255, 171, 0, 0.2);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    color: #888;
+    text-align: center;
+    max-width: 520px;
+    line-height: 1.6;
+  }
+
+  .clock {
+    margin-top: 28px;
+    font-size: 0.78rem;
+    color: #444;
+    letter-spacing: 0.08em;
+  }
+
+  .case-info {
+    margin-top: 32px;
+    font-size: 0.72rem;
+    color: #333;
+    text-align: center;
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+
+<div class="label-top">Outstanding Debt Tracker</div>
+<div class="company">Xerox710 / XBUniverse</div>
+<div class="owes-label">owes Daniel Pall</div>
+
+<div class="amount" id="totalAmount">$0.00</div>
+
+<div class="breakdown">
+  <div class="breakdown-row">
+    <span class="desc">Unpaid contractor invoice (40 hrs × $15.00/hr)</span>
+    <span class="val">$600.00</span>
+  </div>
+  <div class="breakdown-row">
+    <span class="desc">Cal. Civ. Code § 3289 interest (<span id="interestDays">0</span> days × $0.164/day)</span>
+    <span class="val" id="interestAmt">$0.00</span>
+  </div>
+  <div class="breakdown-row total" id="totalRow">
+    <span class="desc">TOTAL OWED</span>
+    <span class="val" id="totalAmt">$600.00</span>
+  </div>
+</div>
+
+<div class="interest-bar-wrap">
+  <div class="interest-bar-label">
+    <span>Interest accrual since breach (Jun 3, 2026)</span>
+    <span id="barDays">0 days</span>
+  </div>
+  <div class="interest-bar-track">
+    <div class="interest-bar-fill" id="interestBar" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="statute-note">
+  Cal. Civ. Code § 3289 — 10% per year prejudgment interest on unpaid contract obligations.<br>
+  Interest runs from the date payment was due: <strong>June 3, 2026</strong>.
+</div>
+
+<div class="status" id="statusLine"></div>
+<div class="clock" id="clock"></div>
+
+<div class="case-info">
+  Daniel Pall v. Xerox710 / XBUniverse<br>
+  Contract signed: May 25, 2026 &nbsp;|&nbsp; Work completed: May 28, 2026<br>
+  Payment deadline missed: June 3, 2026 &nbsp;|&nbsp; Work performed: Los Angeles, CA<br>
+  Filing venue: California Small Claims Court
+</div>
+
+<script>
+  const BASE_INVOICE  = 600.00;
+  const ANNUAL_RATE   = 0.10;           // Cal. Civ. Code § 3289: 10% per year
+  const DAILY_RATE    = BASE_INVOICE * ANNUAL_RATE / 365; // ~$0.1644/day
+
+  // Payment was due June 3, 2026 — interest starts at midnight
+  const BREACH_DATE = new Date(2026, 5, 3, 0, 0, 0); // month is 0-indexed (5 = June)
+
+  // Bar shows progress toward 1 year post-breach (a natural reference point)
+  const BAR_DAYS = 365;
+
+  function fmt(n) {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function update() {
+    const now = new Date();
+
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const rawDays  = Math.max(0, Math.floor((now - BREACH_DATE) / msPerDay));
+    const interest = rawDays * DAILY_RATE;
+    const total    = BASE_INVOICE + interest;
+
+    const barPct = Math.min(100, (rawDays / BAR_DAYS) * 100).toFixed(1);
+
+    document.getElementById('interestDays').textContent = rawDays;
+    document.getElementById('interestAmt').textContent  = fmt(interest);
+    document.getElementById('totalAmt').textContent     = fmt(total);
+    document.getElementById('totalAmount').textContent  = fmt(total);
+    document.getElementById('barDays').textContent      = rawDays + ' day' + (rawDays === 1 ? '' : 's');
+    document.getElementById('interestBar').style.width  = barPct + '%';
+
+    document.getElementById('statusLine').innerHTML =
+      'Interest accrues at <span>' + fmt(DAILY_RATE) + '/day</span> — ' +
+      fmt(interest) + ' added so far.';
+
+    document.getElementById('clock').textContent =
+      'Updated: ' + now.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'medium' });
+  }
+
+  update();
+  setInterval(update, 60000);
+</script>
+</body>
+</html>
