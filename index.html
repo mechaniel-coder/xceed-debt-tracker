@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>X-CEED Owes Daniel Pall</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0a0a0a;
+    color: #fff;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .label-top {
+    font-size: 1rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 12px;
+  }
+
+  .company {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #e53935;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .owes-label {
+    font-size: 1rem;
+    color: #aaa;
+    margin-bottom: 28px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .amount {
+    font-size: clamp(3.5rem, 12vw, 7rem);
+    font-weight: 900;
+    color: #ff1744;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-shadow: 0 0 60px rgba(255, 23, 68, 0.5);
+    transition: color 0.3s;
+  }
+
+  .amount.at-max {
+    color: #ff6d00;
+    text-shadow: 0 0 60px rgba(255, 109, 0, 0.5);
+  }
+
+  .breakdown {
+    margin-top: 36px;
+    width: 100%;
+    max-width: 480px;
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid #1e1e1e;
+    font-size: 0.95rem;
+  }
+
+  .breakdown-row:last-child { border-bottom: none; }
+
+  .breakdown-row .desc { color: #aaa; }
+  .breakdown-row .val  { color: #fff; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .breakdown-row.total .desc { color: #ff1744; font-weight: 700; }
+  .breakdown-row.total .val  { color: #ff1744; font-size: 1.05rem; }
+  .breakdown-row.total.at-max .desc,
+  .breakdown-row.total.at-max .val { color: #ff6d00; }
+
+  .penalty-bar-wrap {
+    margin-top: 28px;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .penalty-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 6px;
+  }
+
+  .penalty-bar-track {
+    background: #1e1e1e;
+    border-radius: 999px;
+    height: 8px;
+    overflow: hidden;
+  }
+
+  .penalty-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #e53935, #ff6d00);
+    transition: width 1s ease;
+  }
+
+  .status {
+    margin-top: 14px;
+    font-size: 0.82rem;
+    color: #555;
+    text-align: center;
+  }
+
+  .status span { color: #888; }
+
+  .clock {
+    margin-top: 32px;
+    font-size: 0.78rem;
+    color: #444;
+    letter-spacing: 0.08em;
+  }
+
+  .cap-notice {
+    display: none;
+    margin-top: 18px;
+    padding: 10px 20px;
+    background: rgba(255, 109, 0, 0.08);
+    border: 1px solid rgba(255, 109, 0, 0.3);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #ff6d00;
+    text-align: center;
+    max-width: 480px;
+  }
+
+  .case-info {
+    margin-top: 36px;
+    font-size: 0.72rem;
+    color: #333;
+    text-align: center;
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+
+<div class="label-top">Outstanding Debt Tracker</div>
+<div class="company">X-CEED Tech Solutions LLC</div>
+<div class="owes-label">owes Daniel Pall</div>
+
+<div class="amount" id="totalAmount">$0.00</div>
+
+<div class="breakdown">
+  <div class="breakdown-row">
+    <span class="desc">Unpaid wages (May 19 – May 29)</span>
+    <span class="val">$2,261.78</span>
+  </div>
+  <div class="breakdown-row">
+    <span class="desc">CA Lab. Code § 203 penalties (<span id="penaltyDays">0</span> days × $270.40)</span>
+    <span class="val" id="penaltyAmt">$0.00</span>
+  </div>
+  <div class="breakdown-row total" id="totalRow">
+    <span class="desc">TOTAL OWED (cash, before equity &amp; commission)</span>
+    <span class="val" id="totalAmt">$2,261.78</span>
+  </div>
+</div>
+
+<div class="penalty-bar-wrap">
+  <div class="penalty-bar-label">
+    <span>§ 203 Penalty accrual (30-day cap)</span>
+    <span id="barPct">0%</span>
+  </div>
+  <div class="penalty-bar-track">
+    <div class="penalty-bar-fill" id="penaltyBar" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="cap-notice" id="capNotice">
+  § 203 penalty has reached the 30-day statutory maximum of $8,112.00.
+</div>
+
+<div class="status" id="statusLine"></div>
+<div class="clock" id="clock"></div>
+
+<div class="case-info">
+  Daniel Pall v. Jonathan Dunnigan / X-CEED Tech Solutions LLC<br>
+  Termination date: May 29, 2026 &nbsp;|&nbsp; Work performed: Los Angeles, CA<br>
+  Equity (30%) and commission (7%) owed in addition to amounts shown above.
+</div>
+
+<script>
+  const BASE_WAGES    = 2261.78;
+  const DAILY_RATE    = 270.40;
+  const MAX_PENALTY_DAYS = 30;
+  const MAX_PENALTY   = DAILY_RATE * MAX_PENALTY_DAYS; // 8112.00
+
+  // Termination: May 29, 2026 at 2:55 AM local
+  const TERM_DATE = new Date(2026, 4, 29, 2, 55, 0); // month is 0-indexed
+
+  function fmt(n) {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function update() {
+    const now = new Date();
+
+    // Full calendar days since termination
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const rawDays = Math.floor((now - TERM_DATE) / msPerDay);
+    const penaltyDays = Math.max(0, Math.min(rawDays, MAX_PENALTY_DAYS));
+    const penalty = penaltyDays * DAILY_RATE;
+    const total = BASE_WAGES + penalty;
+
+    const atCap = penaltyDays >= MAX_PENALTY_DAYS;
+    const pct = Math.min(100, (penaltyDays / MAX_PENALTY_DAYS) * 100).toFixed(1);
+
+    document.getElementById('penaltyDays').textContent = penaltyDays;
+    document.getElementById('penaltyAmt').textContent  = fmt(penalty);
+    document.getElementById('totalAmt').textContent    = fmt(total);
+    document.getElementById('totalAmount').textContent = fmt(total);
+    document.getElementById('barPct').textContent      = pct + '%';
+    document.getElementById('penaltyBar').style.width  = pct + '%';
+
+    const totalEl = document.getElementById('totalRow');
+    const amtEl   = document.getElementById('totalAmount');
+    if (atCap) {
+      totalEl.classList.add('at-max');
+      amtEl.classList.add('at-max');
+      document.getElementById('capNotice').style.display = 'block';
+    } else {
+      totalEl.classList.remove('at-max');
+      amtEl.classList.remove('at-max');
+      document.getElementById('capNotice').style.display = 'none';
+    }
+
+    if (atCap) {
+      document.getElementById('statusLine').innerHTML =
+        'Penalty cap reached. <span>$270.40/day</span> accrual has stopped at <span>$8,112.00</span>.';
+    } else {
+      const daysLeft = MAX_PENALTY_DAYS - penaltyDays;
+      document.getElementById('statusLine').innerHTML =
+        'Penalty grows <span>$270.40/day</span> — reaches cap in <span>' + daysLeft + ' day' + (daysLeft === 1 ? '' : 's') + '</span> (June 28, 2026).';
+    }
+
+    // Live clock
+    document.getElementById('clock').textContent =
+      'Updated: ' + now.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'medium' });
+  }
+
+  update();
+  setInterval(update, 60000); // refresh every minute
+</script>
+</body>
+</html>
